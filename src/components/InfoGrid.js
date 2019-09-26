@@ -8,9 +8,7 @@ import Typography from "@material-ui/core/Typography";
 const InfoGrid = ({ title, ctn }) => {
   return (
     <>
-      <Typography component="h2" variant="h6" color="primary" gutterBottom>
-        {title}
-      </Typography>
+      <h3>{title}</h3>
       <Table>
         <TableBody>
           {Object.entries(ctn).map(([key, val]) => (

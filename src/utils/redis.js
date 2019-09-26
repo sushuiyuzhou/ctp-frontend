@@ -24,3 +24,9 @@ export function getModelPath() {
     .then(handleResponse)
     .catch(handleError);
 }
+
+export function get(key) {
+  return fetch(host + ":" + port + "/GET/" + key, { method: "GET" })
+    .then(handleResponse)
+    .catch(handleError);
+}

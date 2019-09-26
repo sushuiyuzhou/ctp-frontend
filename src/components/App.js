@@ -7,10 +7,14 @@ import PageNotFound from "./PageNotFound";
 import { connect } from "react-redux";
 import { loadModelPath } from "../redux/actions/pathActions";
 
+import Spinner from "./common/Spinner";
+
+import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = ({ modelPath, loadModelPath, ...props }) => {
-  const [path, setPath] = useState("model");
+  const [path, setPath] = useState("");
 
   useEffect(() => {
     // getModelPath().then(res => setModelPath({ modelPath: res }));
@@ -18,16 +22,29 @@ const App = ({ modelPath, loadModelPath, ...props }) => {
       alert("Loading path failed" + error);
     });
     setPath(modelPath);
+
+    // notify if model is returned
+    if (modelPath != "") {
+      toast.success("Server returned model path: " + modelPath);
+    }
   }, [modelPath]);
 
-  return (
-    <div>
-      {path}
-      <Switch>
-        <Route exact path="/" component={TradeStatus} />
-        <Route component={PageNotFound} />
-      </Switch>
-    </div>
+  return path == "" ? (
+    <Spinner />
+  ) : (
+    <>
+      <div>
+        <Switch>
+          <Route
+            exact
+            path="/"
+            render={props => <TradeStatus {...props} path={path} />}
+          />
+          <Route component={PageNotFound} />
+        </Switch>
+      </div>
+      <ToastContainer autoClose={3000} hideProgressBar />
+    </>
   );
 };
 
