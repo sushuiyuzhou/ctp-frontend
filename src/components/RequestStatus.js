@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import Container from "@material-ui/core/Container";
 
 import {
   loadRequestID,
-  loadRequestMethod
+  loadRequestMethod,
+  loadRequestContent
 } from "../redux/actions/requestActions";
 
 import InfoGrid from "./InfoGrid";
 
-const TradeStatus = ({
+const RequestStatus = ({
   path,
   requestID,
   requestMethod,
-  requestCtn,
+  requestContent,
   loadRequestID,
   loadRequestMethod,
+  loadRequestContent,
   ...props
 }) => {
   useEffect(() => {
@@ -26,13 +27,17 @@ const TradeStatus = ({
     loadRequestMethod(path).catch(error => {
       alert("Loading request method failed" + error);
     });
+
+    loadRequestContent(path).catch(error => {
+      alert("Loading request content failed" + error);
+    });
   }, []);
 
   return (
     <>
-      <h3>requestID: {requestID}</h3>
-      <h3>request method: {requestMethod}</h3>
-      <InfoGrid title={"request content:"} ctn={{ key: 1, key2: 2 }} />
+      <div>requestID: {requestID}</div>
+      <div>request method: {requestMethod}</div>
+      <InfoGrid title={"request content:"} ctn={requestContent} />
     </>
   );
 };
@@ -40,16 +45,18 @@ const TradeStatus = ({
 function mapStateToProps(state, ownProps) {
   return {
     requestID: state.request.requestID,
-    requestMethod: state.request.requestMethod
+    requestMethod: state.request.requestMethod,
+    requestContent: state.request.requestContent
   };
 }
 
 const mapDispatchToProps = {
   loadRequestID,
-  loadRequestMethod
+  loadRequestMethod,
+  loadRequestContent
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(TradeStatus);
+)(RequestStatus);

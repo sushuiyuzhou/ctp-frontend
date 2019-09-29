@@ -37,3 +37,21 @@ export function loadRequestMethod(modelPath) {
       });
   };
 }
+
+export function loadRequestContentSuccess(requestContent) {
+  return { type: types.GET_REQUEST_CONTENT_SUCCESS, requestContent };
+}
+
+export function loadRequestContent(modelPath) {
+  return function(dispatch) {
+    return redisApi
+      .hgetall(modelPath + ".Req.Content")
+      .then(res => {
+        dispatch(loadRequestContentSuccess(res.HGETALL));
+      })
+      .catch(error => {
+        dispatch(apiCallError(error));
+        throw error;
+      });
+  };
+}

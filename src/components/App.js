@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Route, Switch } from "react-router-dom";
 
-import TradeStatus from "./TradeStatus";
+import RequestStatus from "./RequestStatus";
+import ResponseStatus from "./ResponseStatus";
 import PageNotFound from "./PageNotFound";
 
 import { connect } from "react-redux";
 import { loadModelPath } from "../redux/actions/pathActions";
+import {
+  loadModelUpdate,
+  changeUpdateStatus
+} from "../redux/actions/updateActions";
 
 import Spinner from "./common/Spinner";
 
@@ -13,19 +18,31 @@ import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const App = ({ modelPath, loadModelPath, ...props }) => {
+const App = ({
+  modelPath,
+  loadModelPath,
+  updateAvailable,
+  loadModelUpdate,
+  changeUpdateStatus,
+  ...props
+}) => {
   const [path, setPath] = useState("");
+  const [updateStatus, setUpdateStatus] = useState(true);
 
   useEffect(() => {
     // getModelPath().then(res => setModelPath({ modelPath: res }));
-    loadModelPath().catch(error => {
-      alert("Loading path failed" + error);
-    });
-    setPath(modelPath);
+    if (updateStatus) {
+      loadModelPath().catch(error => {
+        alert("Loading path failed" + error);
+      });
+      setPath(modelPath);
+      // setUpdateStatus(false);
+    }
 
     // notify if model is returned
     if (modelPath != "") {
       toast.success("Server returned model path: " + modelPath);
+      // loadModelUpdate(modelPath);
     }
   }, [modelPath]);
 
@@ -38,7 +55,12 @@ const App = ({ modelPath, loadModelPath, ...props }) => {
           <Route
             exact
             path="/"
-            render={props => <TradeStatus {...props} path={path} />}
+            render={props => (
+              <>
+                <RequestStatus {...props} path={path} />
+                <ResponseStatus {...props} path={path} />
+              </>
+            )}
           />
           <Route component={PageNotFound} />
         </Switch>
@@ -50,15 +72,18 @@ const App = ({ modelPath, loadModelPath, ...props }) => {
 
 function mapStateToProps(state, ownProps) {
   return {
-    modelPath: state.modelPath
+    modelPath: state.modelPath,
+    updateAvailable: state.updateAvailable
   };
 }
 
-const mapDispatchToPropos = {
-  loadModelPath
+const mapDispatchToProps = {
+  loadModelPath,
+  loadModelUpdate,
+  changeUpdateStatus
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToPropos
+  mapDispatchToProps
 )(App);

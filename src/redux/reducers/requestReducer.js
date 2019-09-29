@@ -7,6 +7,8 @@ export default function requestReducer(state = initialState.request, action) {
       return { ...state, requestID: action.requestID };
     case types.GET_REQUEST_METHOD_SUCCESS:
       return { ...state, requestMethod: action.requestMethod };
+    case types.GET_REQUEST_CONTENT_SUCCESS:
+      return { ...state, requestContent: action.requestContent };
     default:
       return state;
   }

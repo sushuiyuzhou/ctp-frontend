@@ -19,3 +19,21 @@ export function loadModelPath() {
       });
   };
 }
+
+export function getUpdateFromModel() {
+  return { type: types.GET_UPDATE_FROM_MODEL };
+}
+
+export function loadModelUpdate(key) {
+  return function(dispatch) {
+    return redisApi
+      .subscribe(key)
+      .then(res => {
+        dispatch(getUpdateFromModel(res.GET));
+      })
+      .catch(error => {
+        dispatch(apiCallError(error));
+        throw error;
+      });
+  };
+}
