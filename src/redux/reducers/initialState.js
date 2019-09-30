@@ -1,6 +1,6 @@
 export default {
   modelPath: "",
-  updateAvailable: true,
+  updateAvailable: false,
   request: {
     requestID: 0,
     requestMethod: "",
@@ -8,7 +8,8 @@ export default {
   },
   response: {
     responseMethod: "",
-    responseKeys: []
+    responseKeys: [],
+    returnMethod: ""
   },
   apiCallsInProgress: 0
 };

@@ -37,3 +37,21 @@ export function loadResponseKeys(modelPath) {
       });
   };
 }
+
+export function loadReturnMethodSuccess(returnMethod) {
+  return { type: types.GET_RETURN_METHOD_SUCCESS, returnMethod };
+}
+
+export function loadReturnMethod(modelPath) {
+  return function(dispatch) {
+    return redisApi
+      .get(modelPath + ".Rtn.Method")
+      .then(res => {
+        dispatch(loadReturnMethodSuccess(res.GET));
+      })
+      .catch(error => {
+        dispatch(apiCallError(error));
+        throw error;
+      });
+  };
+}

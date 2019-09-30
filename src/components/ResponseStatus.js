@@ -4,7 +4,8 @@ import { host, port } from "../utils/redis";
 
 import {
   loadResponseMethod,
-  loadResponseKeys
+  loadResponseKeys,
+  loadReturnMethod
 } from "../redux/actions/responseActions";
 
 import InfoGrid from "./InfoGrid";
@@ -15,6 +16,9 @@ const ResponseStatus = ({
   loadResponseMethod,
   responseKeys,
   loadResponseKeys,
+  returnMethod,
+  loadReturnMethod,
+  count,
   ...props
 }) => {
   useEffect(() => {
@@ -25,11 +29,16 @@ const ResponseStatus = ({
     loadResponseKeys(path).catch(error => {
       alert("Loading response keys failed" + error);
     });
-  }, []);
+
+    loadReturnMethod(path).catch(error => {
+      alert("Loading return method failed" + error);
+    });
+  }, [count]);
 
   return (
     <>
       <div>response method: {responseMethod}</div>
+      <div>return method: {returnMethod}</div>
       <div>
         response keys:
         <ul>
@@ -57,13 +66,15 @@ const ResponseStatus = ({
 function mapStateToProps(state, ownProps) {
   return {
     responseMethod: state.response.responseMethod,
-    responseKeys: state.response.responseKeys
+    responseKeys: state.response.responseKeys,
+    returnMethod: state.response.returnMethod
   };
 }
 
 const mapDispatchToProps = {
   loadResponseMethod,
-  loadResponseKeys
+  loadResponseKeys,
+  loadReturnMethod
 };
 
 export default connect(

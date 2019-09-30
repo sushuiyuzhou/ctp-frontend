@@ -7,6 +7,8 @@ export default function requestReducer(state = initialState.response, action) {
       return { ...state, responseMethod: action.responseMethod };
     case types.GET_RESPONSE_KEYS_SUCCESS:
       return { ...state, responseKeys: action.responseKeys };
+    case types.GET_RETURN_METHOD_SUCCESS:
+      return { ...state, returnMethod: action.returnMethod };
     default:
       return state;
   }
