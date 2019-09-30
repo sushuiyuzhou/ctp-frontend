@@ -17,6 +17,7 @@ const RequestStatus = ({
   loadRequestID,
   loadRequestMethod,
   loadRequestContent,
+  count,
   ...props
 }) => {
   useEffect(() => {
@@ -31,7 +32,7 @@ const RequestStatus = ({
     loadRequestContent(path).catch(error => {
       alert("Loading request content failed" + error);
     });
-  }, []);
+  }, [count]);
 
   return (
     <>

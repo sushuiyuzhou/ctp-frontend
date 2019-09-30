@@ -18,6 +18,8 @@ import { ToastContainer } from "react-toastify";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { host, port } from "../utils/redis";
+
 const App = ({
   modelPath,
   loadModelPath,
@@ -27,22 +29,44 @@ const App = ({
   ...props
 }) => {
   const [path, setPath] = useState("");
-  const [updateStatus, setUpdateStatus] = useState(true);
+  const [updateStatus, setUpdateStatus] = useState(false);
+  let [updateCount, setUpdateCount] = useState(0);
 
   useEffect(() => {
-    // getModelPath().then(res => setModelPath({ modelPath: res }));
-    if (updateStatus) {
-      loadModelPath().catch(error => {
-        alert("Loading path failed" + error);
-      });
-      setPath(modelPath);
-      // setUpdateStatus(false);
-    }
+    loadModelPath().catch(error => {
+      alert("Loading path failed" + error);
+    });
+    setPath(modelPath);
+    setUpdateStatus(false);
 
     // notify if model is returned
-    if (modelPath != "") {
+    if (modelPath != path) {
       toast.success("Server returned model path: " + modelPath);
-      // loadModelUpdate(modelPath);
+    }
+  }, [modelPath, updateStatus]);
+
+  useEffect(() => {
+    if (modelPath != "") {
+      fetch(host + ":" + port + "/SUBSCRIBE/" + modelPath, {
+        method: "GET"
+      }).then(function(response) {
+        console.log(response);
+        const reader = response.body.getReader();
+        function go() {
+          reader.read().then(function(result) {
+            if (!result.done) {
+              var ctn = JSON.parse(
+                new TextDecoder("utf-8").decode(result.value)
+              );
+              console.log(ctn.SUBSCRIBE);
+              setUpdateStatus(true);
+              setUpdateCount(Math.random());
+              go();
+            }
+          });
+        }
+        go();
+      });
     }
   }, [modelPath]);
 
@@ -57,8 +81,8 @@ const App = ({
             path="/"
             render={props => (
               <>
-                <RequestStatus {...props} path={path} />
-                <ResponseStatus {...props} path={path} />
+                <RequestStatus {...props} path={path} count={updateCount} />
+                <ResponseStatus {...props} path={path} count={updateCount} />
               </>
             )}
           />
